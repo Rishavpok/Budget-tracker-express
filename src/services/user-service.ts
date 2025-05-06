@@ -7,13 +7,13 @@ export class UserService {
     }
 
 
-    async register(username  :string , password : string) {
+    async register(username  :string , password : string, firstName  :string , lastName : string , email : string , phone : string) {
        const existingUser = await User.findOne({username})
         if(existingUser) {
             throw { status : 500 , message : 'User already exists' }
         }
         const hashedPassword = await bcrypt.hash(password,10)
-        const  newUser = new User({username, password : hashedPassword})
+        const  newUser = new User({username, password : hashedPassword, email , firstName , lastName ,phone})
         await newUser.save()
         return newUser
     }

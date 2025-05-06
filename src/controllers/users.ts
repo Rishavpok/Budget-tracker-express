@@ -6,10 +6,10 @@ import User from "../Models/user-model";
 
 // Register new users
 router.post('/register', payloadValidatorMiddleware , async (req, res) => {
-   const { username , password } = req.body
+   const { firstName , lastName , email , phone ,  username , password } = req.body
    const userservice = new UserService()
     try {
-        const newUser = await userservice.register(username,password)
+        const newUser = await userservice.register(username,password, firstName, lastName , email , phone)
         if(newUser) res.status(200).json({ message : "User registered successfully" })
     } catch (err)  {
         const status = err.status || 500;
