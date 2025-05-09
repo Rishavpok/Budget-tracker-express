@@ -1,4 +1,5 @@
 import express  from 'express'
+import {authMiddleware} from "./middleware/authMiddleware";
 const app = express()
 const port = 3000
 app.use(express.json());
@@ -16,13 +17,18 @@ db.once('open', () => {
 
 // routes
 import user from './controllers/users'
-
+import category from './controllers/categores'
+import income from './controllers/income'
+import transaction from "./controllers/transaction";
 
 app.use('/api/users', user)
+app.use('/api/category', authMiddleware, category)
+app.use('/api/income', authMiddleware, income)
+app.use('/api/transaction', authMiddleware , transaction)
 
-// app.get('/', async (req, res) => {
-//   res.send('Hello world !!!!')
-// } )
+app.get('/', async (req, res) => {
+  res.send('Hello world !!!!')
+} )
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
