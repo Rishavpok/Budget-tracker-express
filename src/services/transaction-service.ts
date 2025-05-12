@@ -75,4 +75,30 @@ export class TransactionService {
 
     }
 
+
+    async updateTransaction( transaction_id : string , userId : string , cat_id : string , description : string , attachment : string , income : string, expense : string) {
+
+        if(!description || (!income && !expense) || !cat_id) {
+            throw { status : 401 , message : 'Please provide all information' }
+        }
+
+        const transactions = await Transactions.find({ user: userId });
+        let totalIncome = 0
+
+        for (const tx of transactions) {
+            if (tx.income) {
+                totalIncome += parseFloat(tx.income);
+            }
+        }
+
+        // Check if sufficient balance
+        if (totalIncome < parseFloat(expense)) {
+            throw { status: 400, message: 'Insufficient income balance' };
+        }
+
+        // update your transaction
+        const transaction = await Transactions.findByIdAndUpdate(transaction_id, {user: userId , category : cat_id , description , attachment , income , expense }, { new : true})
+        return transaction
+    }
+
 }

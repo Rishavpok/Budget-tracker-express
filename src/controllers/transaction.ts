@@ -21,7 +21,6 @@ router.get('/list', async (req:RequestUser, res) => {
 } )
 
 // Add new transaction
-
 router.post('/add', async (req : RequestUser, res) => {
     const { userId } = req
     const { category , description , attachment , income , expense  } = req.body
@@ -35,6 +34,7 @@ router.post('/add', async (req : RequestUser, res) => {
     }
 } )
 
+// delete transaction
 router.delete('/:id', async (req , res) => {
     const { id } = req.params
     const service = new TransactionService()
@@ -47,6 +47,7 @@ router.delete('/:id', async (req , res) => {
     }
 } )
 
+// get user income and expenses total
 router.get('/info', async (req: RequestUser, res) => {
     const { userId } = req
     const  service = new TransactionService()
@@ -54,6 +55,25 @@ router.get('/info', async (req: RequestUser, res) => {
     try {
        const data = await service.getIncomeAndExpenses(userId)
         res.status(200).json({ data : data })
+    } catch (e) {
+        res.status(500).json({ message : 'Internal server error !!!' })
+    }
+
+} )
+
+// Update transaction
+
+
+router.put('/:id', async (req : RequestUser, res) => {
+    const { userId } = req
+    const { id } = req.params
+    const { category , description , attachment , income , expense  } = req.body
+    const  service = new TransactionService()
+
+    try {
+        const transaction = service.updateTransaction(id , userId , category , description , attachment , income, expense)
+        if(transaction) res.status(200).json({ message : 'Transaction updated successfully' })
+
     } catch (e) {
         res.status(500).json({ message : 'Internal server error !!!' })
     }
