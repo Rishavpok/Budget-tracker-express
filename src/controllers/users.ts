@@ -58,6 +58,38 @@ router.get('/details' , authMiddleware , async (req : RequestUser, res:any) => {
     }
 } )
 
+// forget password
+router.post('/forget-password', async (req : RequestUser , res) => {
+    const { email } = req.body
+    const service = new UserService()
+    try {
+        const user = await service.forgetPassword(email)
+        if(user)  res.status(200).json({
+            message : "Reset link send to you email address"
+        })
+
+    } catch (e) {
+        const status = e.status || 500;
+        res.status(status).json({ message: e.message || "Server error" });
+    }
+})
+
+router.post('/reset-password', async (req : RequestUser , res) => {
+    const { token , newPassword } = req.body
+    const service = new UserService()
+    try {
+        const user = await service.resetPassword(token, newPassword)
+        if(user)  res.status(200).json({
+            message : "Password updated successfully"
+        })
+
+    } catch (e) {
+        const status = e.status || 500;
+        res.status(status).json({ message: e.message || "Server error" });
+    }
+})
+
+
 
 export default router
 
