@@ -7,11 +7,16 @@ var router = express.Router()
 // get transaction list
 
 router.get('/list', async (req:RequestUser, res) => {
-    const { userId } = req
+    const { userId , query } = req
     const service = new TransactionService()
 
     try {
-        const transaction = await service.getTransactionList(userId)
+        const filter = {
+            startDate  : query.startDate as string,
+            search : query.search as string
+        }
+        console.log(filter)
+        const transaction = await service.getTransactionList(userId,filter)
         if(transaction) res.status(200).json({ data : transaction })
     } catch (err) {
         const status = err.status || 500

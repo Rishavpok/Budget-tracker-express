@@ -34,8 +34,21 @@ export class TransactionService {
     }
 
 
-    async getTransactionList(userId : string) {
-        const list = await Transactions.find({ user : userId });
+    async getTransactionList(userId : string ,filter: { startDate?: string; endDate?: string; search?: string }) {
+        const query :any = {
+            user : userId
+        }
+        if(filter.startDate) {
+            query.createdAt = {
+                $gte: new Date(filter.startDate),
+            };
+        }
+        if(filter.search) {
+            query.description = { $regex : filter.search, $options:"i" }
+        }
+        const list = await Transactions.find(query)
+            .populate("category","name")
+            .sort(({createdAt: -1}));
         if(!list) {
             throw { status : 404 , message : 'No transactions list' }
         }
